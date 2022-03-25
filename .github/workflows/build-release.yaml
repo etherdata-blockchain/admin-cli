@@ -32,11 +32,9 @@ jobs:
           xgo_version: latest
           go_version: ${{ matrix.go_version }}
           dest: dist
-          prefix: getd
+          prefix: main
           targets: linux/arm64,linux/amd64,darwin/amd64,windows/amd64
-          pkg: ./cmd/getd
-        env:
-          CFLAGS: -Wno-error
+          pkg: main
 
       - name: Release
         uses: softprops/action-gh-release@v1
