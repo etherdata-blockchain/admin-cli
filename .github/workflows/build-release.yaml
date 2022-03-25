@@ -32,9 +32,8 @@ jobs:
           xgo_version: latest
           go_version: ${{ matrix.go_version }}
           dest: dist
-          prefix: main
-          targets: linux/arm64,linux/amd64,darwin/amd64,windows/amd64
-          pkg: main
+          prefix: etd
+          v: true
 
       - name: Release
         uses: softprops/action-gh-release@v1
