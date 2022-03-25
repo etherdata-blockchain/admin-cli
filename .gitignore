@@ -1,0 +1,4 @@
+*.zip
+docker-compose.yaml
+docker-compose.yml
+.env

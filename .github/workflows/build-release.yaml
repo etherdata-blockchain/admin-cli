@@ -1,0 +1,45 @@
+name: Build Release
+
+on:
+  push:
+    branches:
+      - "master"
+      - "main"
+    tags:
+      - "**"
+  pull_request:
+    branches:
+      - "master"
+      - "main"
+  release:
+    types:
+      - released
+
+jobs:
+  build-executable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - run: echo $GOPATH
+      - name: Build with xgo
+        uses: crazy-max/ghaction-xgo@v1
+        with:
+          xgo_version: latest
+          go_version: ${{ matrix.go_version }}
+          dest: dist
+          prefix: getd
+          targets: linux/arm64,linux/amd64,darwin/amd64,windows/amd64
+          pkg: ./cmd/getd
+        env:
+          CFLAGS: -Wno-error
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: ${{ github.event_name == 'release' }}
+        with:
+          files: dist/*
