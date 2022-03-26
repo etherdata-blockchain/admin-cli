@@ -45,7 +45,15 @@ func (e *FlagEngine) Run() error {
 	if err := e.ETDClient.VerifyPassword(); err != nil {
 		return err
 	}
-	e.ETDClient.GetTemplate(e.Config.DefaultTemplateId)
+
+	if err := e.ETDClient.GetTemplate(e.Config.DefaultTemplateId); err != nil {
+		return err
+	}
+
+	if err := e.ZipClient.UnZip(constants.SavedTemplateFileName); err != nil {
+		return err
+	}
+
 	return nil
 }
 
