@@ -7,6 +7,12 @@ import (
 	"os"
 )
 
+//go:generate mockgen -source=./zip.go -destination=./zip_mock.go -package=clients
+
+type ZipInterface interface {
+	UnZip(filename string) error
+}
+
 type Zip struct {
 }
 

@@ -5,3 +5,4 @@ docker-compose.yml
 .idea
 .DS_Store
 static-nodes.json
+*_mock.go

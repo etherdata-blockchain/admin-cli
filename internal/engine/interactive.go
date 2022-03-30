@@ -14,6 +14,9 @@ type InteractiveEngine struct {
 	Engine
 }
 
+type InteractiveEngineInterface interface {
+}
+
 //NewInteractiveEngine will create a new interactive command line
 func NewInteractiveEngine() InteractiveEngine {
 	return InteractiveEngine{}
