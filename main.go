@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"os"
 
+	"cli/internal/clients"
 	"cli/internal/engine"
 )
 
 func main() {
-	//etdClient := clients.ETD{}
-	engine := engine.NewFlagEngine()
+	etdClient := &clients.ETD{}
+	zipClient := &clients.Zip{}
 
-	if err := engine.Init(); err != nil {
+	selectedEngine := engine.NewFlagEngine(etdClient, zipClient)
+
+	if err := selectedEngine.Init(); err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
 
-	if err := engine.Run(); err != nil {
+	if err := selectedEngine.Run(); err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}

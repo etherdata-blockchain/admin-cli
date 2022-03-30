@@ -18,16 +18,21 @@ import (
 	"cli/internal/types"
 )
 
+//go:generate mockgen -source=./etd.go -destination=./etd_mock.go -package=clients
+
 type ETDInterface interface {
 	ListTemplate() *types.PaginationResult
 	VerifyPassword() error
 	GetTemplate(templateId string) error
+	SetURL(url string)
+	SetPassword(password string)
+	SetNodeId(nodeId string)
 }
 
 type ETD struct {
-	Url      string
-	Password string
-	NodeId   string
+	url      string
+	password string
+	nodeId   string
 }
 
 type CustomClaims struct {
@@ -49,11 +54,23 @@ func createToken(user string, token string) (string, error) {
 	return t.SignedString([]byte(token))
 }
 
+func (c *ETD) SetURL(url string) {
+	c.url = url
+}
+
+func (c *ETD) SetNodeId(nodeId string) {
+	c.nodeId = nodeId
+}
+
+func (c *ETD) SetPassword(password string) {
+	c.password = password
+}
+
 //VerifyPassword will try to verify user's entered password from our server
 //returns true if password is verified
 func (c *ETD) VerifyPassword() error {
 	log.Printf("Verifying user's password...\n")
-	token, err := createToken(c.NodeId, c.Password)
+	token, err := createToken(c.nodeId, c.password)
 
 	if err != nil {
 		fmt.Printf("Cannot create token due to %s", err)
@@ -61,10 +78,10 @@ func (c *ETD) VerifyPassword() error {
 	}
 
 	// Make request.  See func restrictedHandler for example request processor
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", c.Url, constants.AuthPath), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", c.url, constants.AuthPath), nil)
 	_, done := makeRequest(err, req, token)
 	if !done {
-		return errors.NewInvalidPasswordError(c.Password)
+		return errors.NewInvalidPasswordError(c.password)
 	}
 	return nil
 }
@@ -72,7 +89,7 @@ func (c *ETD) VerifyPassword() error {
 //ListTemplate will list all the templates by querying the admin server
 func (c *ETD) ListTemplate() *types.PaginationResult {
 	fmt.Printf("Getting template...\n")
-	token, err := createToken(c.NodeId, c.Password)
+	token, err := createToken(c.nodeId, c.password)
 
 	if err != nil {
 		log.Printf("Cannot create token due to %s", err)
@@ -80,7 +97,7 @@ func (c *ETD) ListTemplate() *types.PaginationResult {
 	}
 
 	// Make request.  See func restrictedHandler for example request processor
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", c.Url, constants.ListTemplatePath), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", c.url, constants.ListTemplatePath), nil)
 	res, done := makeRequest(err, req, token)
 	if !done {
 		return nil
@@ -94,7 +111,7 @@ func (c *ETD) ListTemplate() *types.PaginationResult {
 //GetTemplate will get the template by templateId. It will also download
 func (c *ETD) GetTemplate(templateId string) error {
 	log.Printf("Getting template %s...\n", templateId)
-	token, err := createToken(c.NodeId, c.Password)
+	token, err := createToken(c.nodeId, c.password)
 	jsonContent, _ := json.Marshal(types.DownloadTemplateRequest{
 		Template: templateId,
 	})
@@ -105,7 +122,7 @@ func (c *ETD) GetTemplate(templateId string) error {
 	}
 
 	// Make request.  See func restrictedHandler for example request processor
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/%s", c.Url, constants.GetTemplatePath), bytes.NewBuffer(jsonContent))
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/%s", c.url, constants.GetTemplatePath), bytes.NewBuffer(jsonContent))
 	res, done := makeRequest(err, req, token)
 	if !done {
 		return errors.NewInvalidTemplateIdError(templateId)
