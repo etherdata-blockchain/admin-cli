@@ -19,6 +19,7 @@ func NewFlagEngine() FlagEngine {
 }
 
 func (e *FlagEngine) Init() error {
+	password := flag.String("password", "", "Remote admin password")
 	environment := flag.String("environment", "production", "Which environment you are running?")
 	template := flag.String("template", "", "Which template id you want to use?")
 
@@ -32,10 +33,16 @@ func (e *FlagEngine) Init() error {
 		return errors.NewInvalidTemplateIdError(*template)
 	}
 
+	if len(*password) == 0 {
+		return errors.NewInvalidPasswordError(*password)
+	}
+
 	if err := e.readEnvironmentFile(); err != nil {
 		return err
 	}
 	e.Config.DefaultTemplateId = *template
+	e.Config.DefaultPassword = *password
+	e.ETDClient.Password = *password
 	e.setupEndpoint(*environment)
 	return nil
 }
@@ -67,17 +74,12 @@ func (e *FlagEngine) readEnvironmentFile() error {
 	if err != nil {
 		return err
 	}
-	e.Config.DefaultPassword = os.Getenv(constants.PasswordKey)
 	e.Config.DefaultNodeId = os.Getenv(constants.NodeIDKey)
-	if len(e.Config.DefaultPassword) == 0 {
-		return errors.NewInvalidPasswordError(e.Config.DefaultPassword)
-	}
 
 	if len(e.Config.DefaultNodeId) == 0 {
 		return errors.NewInvalidNodeIdError(e.Config.DefaultNodeId)
 	}
 
-	e.ETDClient.Password = e.Config.DefaultPassword
 	e.ETDClient.NodeId = e.Config.DefaultNodeId
 	return nil
 }

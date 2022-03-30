@@ -9,14 +9,14 @@ import (
 
 func main() {
 	//etdClient := clients.ETD{}
-	engine := engine.NewFlagEngine()
+	selectedEngine := engine.NewFlagEngine()
 
-	if err := engine.Init(); err != nil {
+	if err := selectedEngine.Init(); err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
 
-	if err := engine.Run(); err != nil {
+	if err := selectedEngine.Run(); err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
