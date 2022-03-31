@@ -15,3 +15,11 @@ func NewInvalidNodeIdError(nodeId string) *InvalidNodeIdError {
 		NodeId: nodeId,
 	}
 }
+
+func (e *InvalidNodeIdError) Is(tgt error) bool {
+	_, ok := tgt.(*InvalidNodeIdError)
+	if !ok {
+		return false
+	}
+	return ok
+}

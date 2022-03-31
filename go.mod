@@ -11,6 +11,7 @@ require (
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
 	github.com/gosuri/uilive v0.0.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/jarcoal/httpmock v1.1.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
