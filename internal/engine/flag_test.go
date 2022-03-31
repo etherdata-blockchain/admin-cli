@@ -241,6 +241,7 @@ func TestFlagEngine_Run(t *testing.T) {
 		etdClient.EXPECT().GetTemplate(gomock.Any()).Return(nil)
 
 		zipClient.EXPECT().UnZip(gomock.Any())
+		zipClient.EXPECT().Remove(gomock.Any())
 
 		os.Args = []string{"cmd", "-template=mock", "-password=mock"}
 

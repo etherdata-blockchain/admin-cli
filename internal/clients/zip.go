@@ -11,6 +11,7 @@ import (
 
 type ZipInterface interface {
 	UnZip(filename string) error
+	Remove(filename string) error
 }
 
 type Zip struct {
@@ -49,5 +50,14 @@ func (z *Zip) UnZip(filename string) error {
 			}
 		}
 	}
+	return nil
+}
+
+func (z *Zip) Remove(filename string) error {
+	err := os.Remove(filename)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
