@@ -69,6 +69,10 @@ func (e *FlagEngine) Run() error {
 		return err
 	}
 
+	if err := e.ZipClient.Remove(constants.SavedTemplateFileName); err != nil {
+		return err
+	}
+
 	return nil
 }
 
